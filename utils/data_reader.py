@@ -9,7 +9,7 @@ from torch.utils.data import Dataset
 
 DATAFOLDER = os.environ['DATAFOLDER']
 
-def get_coins_data(coins, daterange, interval, fillna=True):
+def get_ticker_data(coins, daterange, interval, fillna=True):
     '''
     :param coins: list of coin names to be retrieved (e.g. ['ETH', 'BTC']
     :param daterange: tuple of dates which serve as upper and lower bound, e.g. ('2020-01-01', '2021-01-01)
@@ -42,7 +42,7 @@ def default_target_function(data, lookahead_window=24, target_cols=None, q=0.9):
 def prepare_data(data, lookback_window, features, test_size=0.05, shuffle=False, flatten=True, lookback_delta=1,
                  target_function=default_target_function):
     '''
-    :param data: dataframe as returned from get_coins_data
+    :param data: dataframe as returned from get_ticker_data
     :param lookback_window: int that specifies how far back into the past each observation sees
     :param features: dict of dictionaries, each having "function", "kwargs" and "gauge" as keys. "kwargs" must contain the\
     name of the feature and the keyword arguments of the feature's "function"
@@ -56,7 +56,7 @@ def prepare_data(data, lookback_window, features, test_size=0.05, shuffle=False,
     remaining values should be returned as np.ndarray. See default_target_function for an example.
     :return: tuple of np.ndarrays, X_train, X_test, y_train, y_test
     Example:
-        >> data = get_coins_data(['ETH', 'BTC', 'ADA', 'TRX', 'XRP'], ('2020-01-01', '2023-01-01'), '1hour')
+        >> data = get_ticker_data(['ETH', 'BTC', 'ADA', 'TRX', 'XRP'], ('2020-01-01', '2023-01-01'), '1hour')
         >> from RL.feature_extraction.feature_functions import rolling_ou, rsi, rolling_quantile
         >> features = {'rsi': {'function': rsi, 'kwargs': {'n': 12, 'name': 'rsi_12'}, 'gauge': False},
                     'ou_est': {'function': rolling_ou, 'kwargs': {'clip_window': 48, 'est_window': 12, 'name': 'ou_12'}, 'gauge': True},
@@ -97,7 +97,7 @@ def data_writer(data, lookback_window, lookahead_window, features, folder_name, 
     Implements a data writer which stores calculated features and labels in a .hdf5 file. It returns the necessary\
     arguments to construct a CryptoDataset, which is an iterator that reads the data from the hard drive instead of\
     story it in working memory.
-    :param data: dataframe as returned from get_coins_data
+    :param data: dataframe as returned from get_ticker_data
     :param lookback_window: int that specifies how far back into the past each observation sees
     :param features: dict of dictionaries, each having "function", "kwargs" and "gauge" as keys. "kwargs" must contain the\
     name of the feature and the keyword arguments of the feature's "function"
@@ -108,7 +108,7 @@ def data_writer(data, lookback_window, lookahead_window, features, folder_name, 
     remaining values should be returned as np.ndarray. See default_target_function for an example.
     :return: conversion_matrix and mask required to construct data loader
     Example:
-        >> data = get_coins_data(['ETH', 'BTC', 'ADA', 'TRX', 'XRP'], ('2020-01-01', '2023-01-01'), '1hour')
+        >> data = get_ticker_data(['ETH', 'BTC', 'ADA', 'TRX', 'XRP'], ('2020-01-01', '2023-01-01'), '1hour')
         >> from RL.feature_extraction.feature_functions import rolling_ou, rsi, rolling_quantile
         >> features = {'rsi': {'function': rsi, 'kwargs': {'n': 12, 'name': 'rsi_12'}, 'gauge': False},
                     'ou_est': {'function': rolling_ou, 'kwargs': {'clip_window': 48, 'est_window': 12, 'name': 'ou_12'}, 'gauge': True},
@@ -173,7 +173,7 @@ if __name__ == '__main__':
     lookback_window = 48
     lookahead_window = 48
     lookback_delta = 4
-    data = get_coins_data(['ETH', 'BTC', 'ADA', 'TRX', 'XRP'], ('2020-01-01', '2023-01-01'), '1hour')
+    data = get_ticker_data(['ETH', 'BTC', 'ADA', 'TRX', 'XRP'], ('2020-01-01', '2023-01-01'), '1hour')
     from RL.feature_extraction.feature_functions import rolling_ou, rsi, rolling_quantile
     features = {'rsi': {'function': rsi, 'kwargs': {'n': 12, 'name': 'rsi_12'}, 'gauge': False},
                 'ou_est': {'function': rolling_ou, 'kwargs': {'clip_window': 48, 'est_window': 12, 'name': 'ou_12'}, 'gauge': True},

@@ -50,7 +50,7 @@ def custom_loss(y_hat, dtrain, mult=5, eps = 0.005):
 if __name__ == '__main__':
     import numpy as np
     import pandas as pd
-    from RL.utils.data_reader import get_coins_data, prepare_data
+    from RL.utils.data_reader import get_ticker_data, prepare_data
     import matplotlib.pyplot as plt
     import time
     from RL.feature_extraction.feature_functions import rsi, rolling_mean, bollinger_bands, rolling_std
@@ -58,7 +58,7 @@ if __name__ == '__main__':
 
     np.random.seed(123)
     coins = ['ETH', 'BTC']
-    data = get_coins_data(coins=coins, daterange=('2019-01-01', '2023-08-01'), interval='5min', fillna=True).reset_index(drop=True)
+    data = get_ticker_data(coins=coins, daterange=('2019-01-01', '2023-08-01'), interval='5min', fillna=True).reset_index(drop=True)
     lookback_window = 240
     lookahead_window = 48
 

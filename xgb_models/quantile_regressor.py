@@ -41,7 +41,7 @@ class XGBRFQuantileRegressor:
 class XGBCustomQuantileRegressor:
     '''
     The xgboost module does not support random forests with the quantile error objective function. This implementation\
-    uses bootstrap agggregating (bagging), as well as feature bagging, to train a random forest to perform quantile\
+    uses bootstrap aggregating (bagging), as well as feature bagging, to train a random forest to perform quantile\
     regression. Note: the DMatrix structure used to train xgboost models cannot be pickled. Hence, this class does\
     not support training multiple trees in parallel.
     '''
@@ -137,14 +137,14 @@ class XGBTemporalQuantileRegressor(XGBCustomQuantileRegressor):
 if __name__ == '__main__':
     import numpy as np
     import pandas as pd
-    from RL.utils.data_reader import get_coins_data, prepare_data, default_target_function
+    from RL.utils.data_reader import get_ticker_data, prepare_data, default_target_function
     import matplotlib.pyplot as plt
     import time
     from RL.feature_extraction.feature_functions import rolling_ou, rsi, rolling_quantile
 
     np.random.seed(123)
     coins = ['BTC', 'ETH', 'XRP', 'ADA']
-    data = get_coins_data(coins=coins, daterange=('2020-01-01', '2023-01-01'), interval='1hour', fillna=True).reset_index(drop=True)
+    data = get_ticker_data(coins=coins, daterange=('2020-01-01', '2023-01-01'), interval='1hour', fillna=True).reset_index(drop=True)
     lookback_window = 48
     lookahead_window = 24
 
