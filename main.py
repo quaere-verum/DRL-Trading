@@ -5,7 +5,7 @@ import gymnasium as gym
 import warnings
 from stable_baselines3 import PPO
 import torch as th
-from RL.feature_extraction.torch_modules import CombinedLSTMExtractor
+from feature_extraction.torch_modules import CombinedLSTMExtractor
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.callbacks import EvalCallback
 from stable_baselines3.common.monitor import Monitor
