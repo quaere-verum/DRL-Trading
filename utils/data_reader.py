@@ -9,18 +9,18 @@ from torch.utils.data import Dataset
 
 DATAFOLDER = os.environ['DATAFOLDER']
 
-def get_ticker_data(coins, daterange, interval, fillna=True):
+def get_ticker_data(assets, daterange, interval, fillna=True):
     '''
-    :param coins: list of coin names to be retrieved (e.g. ['ETH', 'BTC']
+    :param assets: list of asset names to be retrieved (e.g. ['ETH', 'BTC']
     :param daterange: tuple of dates which serve as upper and lower bound, e.g. ('2020-01-01', '2021-01-01)
     :param interval: interval over which the data was collected.
     :param fillna: boolean which determines if 'Close' is frontfilled, and if 'Volume' is filled with zeros, if empty
     :return: dataframe with columns (coin, 'Close') and (coin, 'Volume') for coin in coins, for the specified interval\
     between the specified dates
     '''
-    concat = pd.concat([pd.read_csv(fr'{DATAFOLDER}\\{coin}_full_{interval}.txt',
+    concat = pd.concat([pd.read_csv(fr'{DATAFOLDER}\\{asset}_full_{interval}.txt',
                           names=['timestamp', 'Close', 'Volume'], usecols=[0, 4, 5], index_col=0, parse_dates=[0])
-              for coin in coins], axis=1).sort_index().asfreq('1h' if interval == '1hour' else interval).loc[daterange[0]:daterange[1]]
+              for asset in assets], axis=1).sort_index().asfreq('1h' if interval == '1hour' else interval).loc[daterange[0]:daterange[1]]
     if fillna:
         concat['Close'] = concat['Close'].ffill()
         concat['Volume'] = concat['Volume'].fillna(0)
@@ -64,11 +64,11 @@ def prepare_data(data, lookback_window, features, test_size=0.05, shuffle=False,
         >> X_train, X_test, y_train, y_test = prepare_data(data, features=features)
     '''
     data = data.reset_index(drop=True)
-    coins = list(data.columns.get_level_values(0).unique())
+    assets = list(data.columns.get_level_values(0).unique())
     futures = []
     with ProcessPoolExecutor(mp.cpu_count()) as executor:
-        for (coin, feature) in product(coins, features.keys()):
-            futures.append(executor.submit(features[feature]['function'], data=data[coin], asset=coin, **features[feature]['kwargs']))
+        for (asset, feature) in product(assets, features.keys()):
+            futures.append(executor.submit(features[feature]['function'], data=data[asset], asset=asset, **features[feature]['kwargs']))
     for future in futures:
         temp = future.result()
         data = pd.concat((data, temp), axis=1)
@@ -95,7 +95,7 @@ def data_writer(data, lookback_window, lookahead_window, features, folder_name, 
                  target_function=default_target_function):
     '''
     Implements a data writer which stores calculated features and labels in a .hdf5 file. It returns the necessary\
-    arguments to construct a CryptoDataset, which is an iterator that reads the data from the hard drive instead of\
+    arguments to construct a HDF5Dataset, which is an iterator that reads the data from the hard drive instead of\
     story it in working memory.
     :param data: dataframe as returned from get_ticker_data
     :param lookback_window: int that specifies how far back into the past each observation sees
@@ -144,7 +144,7 @@ def data_writer(data, lookback_window, lookahead_window, features, folder_name, 
     return conversion_matrix, mask
 
 
-class CryptoDataset(Dataset):
+class HDF5Dataset(Dataset):
     def __init__(self, path, lookback_window, conversion_matrix, mask, lookback_delta, in_memory=False):
         self.path = fr'{DATAFOLDER}\\{path}'
         self.lookback_window = lookback_window
@@ -181,8 +181,8 @@ if __name__ == '__main__':
     target_function = lambda x: default_target_function(x, lookahead_window=48, target_cols=['ETH'], q=0.9)
     conversion_matrix, mask = data_writer(data, lookback_window, lookahead_window, features,
                                           'test', lookback_delta, target_function)
-    in_memory = CryptoDataset('test', lookback_window, conversion_matrix, mask, lookback_delta, True)
-    harddrive = CryptoDataset('test', lookback_window, conversion_matrix, mask, lookback_delta, False)
+    in_memory = HDF5Dataset('test', lookback_window, conversion_matrix, mask, lookback_delta, True)
+    harddrive = HDF5Dataset('test', lookback_window, conversion_matrix, mask, lookback_delta, False)
     import time
     from torch.utils.data import DataLoader
     in_memory_loader = DataLoader(in_memory, batch_size=64, shuffle=True, num_workers=mp.cpu_count())
