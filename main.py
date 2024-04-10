@@ -12,9 +12,9 @@ from stable_baselines3.common.monitor import Monitor
 import os
 warnings.filterwarnings(category=UserWarning, action='ignore')
 
-gym.envs.register('MultiAssetEnv', 'RL.gym_envs.MultiAssetEnv:MultiAssetEnv')
-gym.envs.register('MultiAssetEnvDiscrete', 'RL.gym_envs.MultiAssetEnv:MultiAssetEnvDiscrete')
-gym.envs.register('MultiAssetEnvMultiDiscrete', 'RL.gym_envs.MultiAssetEnv:MultiAssetEnvMultiDiscrete')
+gym.envs.register('MultiAssetEnv', 'gym_envs.MultiAssetEnv:MultiAssetEnv')
+gym.envs.register('MultiAssetEnvDiscrete', 'gym_envs.MultiAssetEnv:MultiAssetEnvDiscrete')
+gym.envs.register('MultiAssetEnvMultiDiscrete', 'gym_envs.MultiAssetEnv:MultiAssetEnvMultiDiscrete')
 
 def fake_priceseries_generator(n_steps, n_assets, std=0.005):
     covariance = np.random.uniform(low=-1, high=1, size=(n_assets, n_assets))
