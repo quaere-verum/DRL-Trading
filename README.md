@@ -30,6 +30,6 @@ Each observation is a dictionary which contains three keys:
    - 'sequential', which contains all those features (dynamic and otherwise) which were passed with 'sequential': True
    - 'other', which contains the remaining features
 
-In each case, they are divided (or "gauged", in physics lingo) by the most recent closing prices of the assets.
+In each case, they are divided (or "[gauged](https://en.wikipedia.org/wiki/Gauge_theory)", in physics lingo) by the most recent closing prices of the assets.
 What remains is to design or choose an existing DRL algorithm, and create a feature extractor for the observations. An example of such a feature extractor is provided in the [torch modules file](https://github.com/quaere-verum/DRL-Trading/blob/main/feature_extraction/torch_modules.py).
 See also main.py.
