@@ -26,7 +26,7 @@ return was predicted, the position will be automatically closed at the current c
 
 Now the environment can be created. In order to train a reinforcement learning model, it is import to know the structure of the observations returned by the environment.
 Each observation is a dictionary which contains three keys:
-   - 'prices', which contains a the price series of the assets
+   - 'prices', which contains the price series of the assets
    - 'sequential', which contains all those features (dynamic and otherwise) which were passed with 'sequential': True
    - 'other', which contains the remaining features
 
