@@ -23,6 +23,7 @@ return was predicted, the position will be automatically closed at the current c
    - 'gauge', see above
    - 'initial_value', self-explanatory
    - 'function', a reference to the function that you've designed
+
 Now the environment can be created. In order to train a reinforcement learning model, it is import to know the structure of the observations returned by the environment.
 Each observation is a dictionary which contains three keys:
    - 'prices', which contains a the price series of the assets
